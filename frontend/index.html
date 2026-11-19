@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogiTrack - Gestion de Bodegas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <span class="logo">📦</span>
+        <h1>LogiTrack</h1>
+        <small>Sistema de Gestion y Auditoria de Bodegas</small>
+    </div>
+    <div id="user-bar" class="user-bar" hidden>
+        <span id="user-info"></span>
+        <button id="btn-logout" class="btn btn-ghost">Cerrar sesion</button>
+    </div>
+</header>
+
+<!-- ===================== VISTA LOGIN ===================== -->
+<section id="login-view" class="login-card">
+    <h2>Acceso al sistema</h2>
+    <div class="tabs">
+        <button id="tab-login" class="tab active" onclick="showLogin()">Iniciar sesion</button>
+        <button id="tab-register" class="tab" onclick="showRegister()">Registrarse</button>
+    </div>
+
+    <form id="login-form" onsubmit="return doLogin(event)">
+        <label>Usuario
+            <input type="text" id="login-username" required placeholder="admin">
+        </label>
+        <label>Contraseña
+            <input type="password" id="login-password" required placeholder="admin123">
+        </label>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+
+    <form id="register-form" onsubmit="return doRegister(event)" hidden>
+        <label>Usuario
+            <input type="text" id="reg-username" required minlength="3" placeholder="nuevo_usuario">
+        </label>
+        <label>Contraseña
+            <input type="password" id="reg-password" required minlength="4" placeholder="********">
+        </label>
+        <label>Email
+            <input type="email" id="reg-email" placeholder="correo@dominio.com">
+        </label>
+        <label>Nombre completo
+            <input type="text" id="reg-nombre" placeholder="Nombre Apellido">
+        </label>
+        <label>Rol
+            <select id="reg-rol">
+                <option value="EMPLEADO">EMPLEADO</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
+        </label>
+        <button type="submit" class="btn btn-primary">Crear cuenta</button>
+    </form>
+
+    <p id="auth-msg" class="msg"></p>
+    <p class="hint">Usuarios de prueba: <b>admin / admin123</b> &middot; <b>empleado / empleado123</b></p>
+</section>
+
+<!-- ===================== VISTA APP ===================== -->
+<section id="app-view" hidden>
+    <nav class="navbar">
+        <button class="nav-btn active" data-tab="bodegas" onclick="switchTab('bodegas')">Bodegas</button>
+        <button class="nav-btn" data-tab="productos" onclick="switchTab('productos')">Productos</button>
+        <button class="nav-btn" data-tab="movimientos" onclick="switchTab('movimientos')">Movimientos</button>
+        <button class="nav-btn" data-tab="stockbajo" onclick="switchTab('stockbajo')">Stock Bajo</button>
+        <button class="nav-btn" data-tab="auditoria" onclick="switchTab('auditoria')">Auditoria</button>
+        <button class="nav-btn" data-tab="reportes" onclick="switchTab('reportes')">Reportes</button>
+    </nav>
+
+    <main id="content" class="content"></main>
+</section>
+
+<footer class="footer">
+    <p>LogiTrack S.A. &copy; 2026 - API: <a id="api-link" href="#" target="_blank">/swagger-ui.html</a></p>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
