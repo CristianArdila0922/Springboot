@@ -1,87 +1,288 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack - Gestion de Bodegas</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogiTrack — Gestión y Auditoría de Bodegas</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="topbar">
-    <div class="brand">
-        <span class="logo">📦</span>
-        <h1>LogiTrack</h1>
-        <small>Sistema de Gestion y Auditoria de las Bodegas</small>
-    </div>
-    <div id="user-bar" class="user-bar" hidden>
-        <span id="user-info"></span>
-        <button id="btn-logout" class="btn btn-ghost">Cerrar sesion</button>
-    </div>
-</header>
-
-<!-- ===================== VISTA LOGIN ===================== -->
-<section id="login-view" class="login-card">
-    <h2>Acceso a los sistemas</h2>
-    <div class="tabs">
-        <button id="tab-login" class="tab active" onclick="showLogin()">Iniciar sesion</button>
-        <button id="tab-register" class="tab" onclick="showRegister()">Registrarse</button>
+  <!-- VISTA DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
+  <div id="authView" class="auth-wrapper">
+    <div class="auth-topbar">
+      <div class="brand">
+        <span class="brand-badge">LT</span>
+        <div>
+          <strong>LogiTrack</strong>
+          <small>Sistema de Gestión y Auditoría de Bodegas</small>
+        </div>
+      </div>
+      <div class="api-box">
+        <input type="url" id="apiUrlInput" placeholder="http://localhost:8080" />
+        <button type="button" id="btnSaveApi" class="btn btn-light btn-sm">Guardar API</button>
+      </div>
     </div>
 
-    <form id="login-form" onsubmit="return doLogin(event)">
-        <label>Usuario
-            <input type="text" id="login-username" required placeholder="admin">
-        </label>
-        <label>Contraseña
-            <input type="password" id="login-password" required placeholder="admin123">
-        </label>
-        <button type="submit" class="btn btn-primary">Entrar</button>
-    </form>
+    <main class="auth-center">
+      <div class="auth-card">
+        <h1>Acceso al Sistema</h1>
+        <p class="subtitle">Conecta con tu cuenta para administrar inventario y ventas</p>
 
-    <form id="register-form" onsubmit="return doRegister(event)" hidden>
-        <label>Usuario
-            <input type="text" id="reg-username" required minlength="3" placeholder="nuevo_usuario">
-        </label>
-        <label>Contraseña
-            <input type="password" id="reg-password" required minlength="4" placeholder="********">
-        </label>
-        <label>Email
-            <input type="email" id="reg-email" placeholder="correo@dominio.com">
-        </label>
-        <label>Nombre completo
-            <input type="text" id="reg-nombre" placeholder="Nombre Apellido">
-        </label>
-        <label>Rol
-            <select id="reg-rol">
-                <option value="EMPLEADO">EMPLEADO</option>
-                <option value="ADMIN">ADMIN</option>
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab active" data-auth-tab="login">Iniciar sesión</button>
+          <button type="button" class="auth-tab" data-auth-tab="register">Registrarse</button>
+        </div>
+
+        <!-- FORMULARIO LOGIN -->
+        <form id="loginForm" class="auth-form active" novalidate>
+          <div class="field">
+            <label for="loginUsername">Usuario</label>
+            <input type="text" id="loginUsername" placeholder="Ej: admin" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label for="loginPassword">Contraseña</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+          <button type="submit" id="btnLogin" class="btn btn-primary btn-block">Entrar</button>
+          <p class="helper-users">
+            Usuarios de prueba: <strong>admin / admin123</strong> · <strong>empleado / empleado123</strong>
+          </p>
+        </form>
+
+        <!-- FORMULARIO REGISTRO -->
+        <form id="registerForm" class="auth-form" novalidate>
+          <div class="field">
+            <label for="regNombre">Nombre completo</label>
+            <input type="text" id="regNombre" placeholder="Ej: Carlos Pérez" required />
+          </div>
+          <div class="field">
+            <label for="regUsername">Usuario</label>
+            <input type="text" id="regUsername" placeholder="Ej: cperez" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label for="regEmail">Correo electrónico</label>
+            <input type="email" id="regEmail" placeholder="correo@logitrack.com" required />
+          </div>
+          <div class="field">
+            <label for="regPassword">Contraseña</label>
+            <input type="password" id="regPassword" placeholder="Mínimo 4 caracteres" autocomplete="new-password" required />
+          </div>
+          <div class="field">
+            <label for="regRol">Rol</label>
+            <select id="regRol">
+              <option value="EMPLEADO">EMPLEADO</option>
+              <option value="ADMIN">ADMIN</option>
             </select>
-        </label>
-        <button type="submit" class="btn btn-primary">Crear cuenta</button>
-    </form>
+          </div>
+          <button type="submit" id="btnRegister" class="btn btn-primary btn-block">Crear cuenta y entrar</button>
+        </form>
+      </div>
 
-    <p id="auth-msg" class="msg"></p>
-    <p class="hint">Usuarios de prueba: <b>admin / admin123</b> &middot; <b>empleado / empleado123</b></p>
-</section>
+      <footer class="auth-footer">
+        LogiTrack S.A. © 2026 — API: <a id="swaggerLink" href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noreferrer">/swagger-ui.html</a>
+      </footer>
+    </main>
+  </div>
 
-<!-- ===================== VISTA APP ===================== -->
-<section id="app-view" hidden>
-    <nav class="navbar">
-        <button class="nav-btn active" data-tab="bodegas" onclick="switchTab('bodegas')">Bodegas</button>
-        <button class="nav-btn" data-tab="productos" onclick="switchTab('productos')">Productos</button>
-        <button class="nav-btn" data-tab="movimientos" onclick="switchTab('movimientos')">Movimientos</button>
-        <button class="nav-btn" data-tab="stockbajo" onclick="switchTab('stockbajo')">Stock Bajo</button>
-        <button class="nav-btn" data-tab="auditoria" onclick="switchTab('auditoria')">Auditoria</button>
-        <button class="nav-btn" data-tab="reportes" onclick="switchTab('reportes')">Reportes</button>
-    </nav>
+  <!-- VISTA PRINCIPAL DEL SISTEMA (DASHBOARD) -->
+  <div id="appView" class="app-shell hidden">
+    <header class="navbar">
+      <div class="brand">
+        <span class="brand-badge">LT</span>
+        <div>
+          <strong>LogiTrack</strong>
+          <small id="navApiLabel">localhost:8080</small>
+        </div>
+      </div>
 
-    <main id="content" class="content"></main>
-</section>
+      <nav class="nav-links">
+        <button type="button" class="nav-btn active" data-page="page-productos">Productos</button>
+        <button type="button" class="nav-btn" data-page="page-ventas">Ventas</button>
+        <button type="button" class="nav-btn" data-page="page-token">Token & Logs</button>
+      </nav>
 
-<footer class="footer">
-    <p>LogiTrack S.A. &copy; 2026 - API: <a id="api-link" href="#" target="_blank">/swagger-ui.html</a></p>
-</footer>
+      <div class="user-actions">
+        <span id="userBadge" class="user-badge">usuario</span>
+        <button type="button" id="btnLogout" class="btn btn-danger btn-sm">Salir</button>
+      </div>
+    </header>
 
-<script src="js/app.js"></script>
+    <main class="container">
+      <!-- PÁGINA PRODUCTOS -->
+      <section id="page-productos" class="page active">
+        <div class="page-head">
+          <div>
+            <h2>Inventario de Productos</h2>
+            <p>Endpoint: <code>/api/producto</code></p>
+          </div>
+          <button type="button" id="btnReloadProductos" class="btn btn-secondary">Recargar</button>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <span>Total productos</span>
+            <strong id="kpiProdCount">0</strong>
+          </div>
+          <div class="kpi">
+            <span>Unidades en stock</span>
+            <strong id="kpiProdStock">0</strong>
+          </div>
+          <div class="kpi">
+            <span>Valor inventario</span>
+            <strong id="kpiProdValor">$0</strong>
+          </div>
+        </div>
+
+        <div class="grid-main">
+          <div class="card">
+            <div class="toolbar">
+              <input type="search" id="searchProducto" placeholder="Buscar producto por nombre o marca..." />
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>P. Compra</th>
+                    <th>P. Venta</th>
+                    <th>Stock</th>
+                    <th class="right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="productosBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 id="formProductoTitulo">Nuevo Producto</h3>
+            <form id="productoForm" novalidate>
+              <input type="hidden" id="prodId" />
+              <div class="field">
+                <label for="prodNombre">Nombre</label>
+                <input type="text" id="prodNombre" placeholder="Ej: Laptop Dell" required />
+              </div>
+              <div class="field">
+                <label for="prodMarca">Marca</label>
+                <input type="text" id="prodMarca" placeholder="Ej: Dell" required />
+              </div>
+              <div class="row-2">
+                <div class="field">
+                  <label for="prodStock">Stock</label>
+                  <input type="number" id="prodStock" min="0" step="1" placeholder="10" required />
+                </div>
+                <div class="field">
+                  <label for="prodCompra">P. Compra</label>
+                  <input type="number" id="prodCompra" min="0" step="0.01" placeholder="800000" required />
+                </div>
+              </div>
+              <div class="field">
+                <label for="prodVenta">P. Venta</label>
+                <input type="number" id="prodVenta" min="0" step="0.01" placeholder="1200000" required />
+              </div>
+              <div class="btn-row">
+                <button type="submit" id="btnSaveProducto" class="btn btn-primary">Guardar</button>
+                <button type="button" id="btnCancelProducto" class="btn btn-secondary">Limpiar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- PÁGINA VENTAS -->
+      <section id="page-ventas" class="page">
+        <div class="page-head">
+          <div>
+            <h2>Registro de Ventas</h2>
+            <p>Endpoint: <code>/api/venta</code></p>
+          </div>
+          <button type="button" id="btnReloadVentas" class="btn btn-secondary">Recargar</button>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <span>Ventas registradas</span>
+            <strong id="kpiVentasCount">0</strong>
+          </div>
+          <div class="kpi">
+            <span>Total vendido</span>
+            <strong id="kpiVentasTotal">$0</strong>
+          </div>
+          <div class="kpi">
+            <span>Ticket promedio</span>
+            <strong id="kpiVentasProm">$0</strong>
+          </div>
+        </div>
+
+        <div class="grid-equal">
+          <div class="card">
+            <h3>Nueva Venta</h3>
+            <form id="ventaForm" novalidate>
+              <div class="field">
+                <label for="ventaDoc">Documento Cliente</label>
+                <input type="number" id="ventaDoc" min="1" step="1" placeholder="1097105988" required />
+              </div>
+              <div class="field">
+                <label for="ventaCliente">Nombre Completo</label>
+                <input type="text" id="ventaCliente" placeholder="Joaquín Pérez" required />
+              </div>
+              <div class="field">
+                <label for="ventaTotal">Total ($)</label>
+                <input type="number" id="ventaTotal" min="0.01" step="0.01" placeholder="1200000" required />
+              </div>
+              <button type="submit" id="btnSaveVenta" class="btn btn-primary btn-block">Registrar Venta</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3>Historial de Ventas</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Documento</th>
+                    <th>Cliente</th>
+                    <th class="right">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="ventasBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PÁGINA TOKEN Y CONSOLA -->
+      <section id="page-token" class="page">
+        <div class="page-head">
+          <div>
+            <h2>Sesión JWT & Consola HTTP</h2>
+            <p>Inspección del token activo y peticiones enviadas a Spring Boot</p>
+          </div>
+          <button type="button" id="btnClearLog" class="btn btn-secondary">Limpiar consola</button>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <h3>Token JWT Actual</h3>
+          <textarea id="jwtBox" readonly rows="3"></textarea>
+          <div class="btn-row" style="margin-top: 10px;">
+            <button type="button" id="btnCopyJwt" class="btn btn-secondary btn-sm">Copiar Token</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Consola HTTP</h3>
+          <pre id="httpConsole">// Listo...</pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toasts" class="toasts"></div>
+  <script src="app.js"></script>
 </body>
 </html>
